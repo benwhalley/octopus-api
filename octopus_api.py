@@ -117,7 +117,7 @@ class OctopusApi:
             func: callable,
         ) -> List[Any]:
 
-            print(rate, retries, max_time, connections)
+            # print(rate, retries, max_time, connections)
             responses_order: Dict = {}
             progress_bar = tqdm(total=len(requests_list))
             sleep = 1 / rate if rate else 0

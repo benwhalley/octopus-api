@@ -42,9 +42,9 @@ def run_requests(args_dict):
     default_args.update(args_dict)
     jbs = json.loads(default_args['job_list'])
     default_args['job_list']= [v for k,v in jbs.items()]
-    print("JOB LIST")
-    print( default_args['job_list'])
-    print("Running requests now")
+    # print("JOB LIST")
+    # print( default_args['job_list'])
+    # print("Running requests now")
     return run_requests_(default_args)
 
 
