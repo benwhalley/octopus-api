@@ -49,7 +49,7 @@ class TentacleSession(aiohttp.ClientSession):
 
 def backoff_hdlr(details):
     print(
-        f"Backing off {details['wait']:0.1f} seconds after {details['tries']} tries \n"
+        f"Backing off {details['wait']} seconds after {details['tries']} tries \n"
         f"{details}\n---\n"
     )
 
@@ -117,6 +117,7 @@ class OctopusApi:
             func: callable,
         ) -> List[Any]:
 
+            print(rate, retries, max_time, connections)
             responses_order: Dict = {}
             progress_bar = tqdm(total=len(requests_list))
             sleep = 1 / rate if rate else 0
@@ -168,7 +169,7 @@ class OctopusApi:
 
         Args:
             requests_list (List[Dict[str, Any]): The list of requests in a dictionary format, e.g.
-            [{"url": "http://example.com", "params": {...}, "body": {...}}..]
+            [{"url": "http://example.com", "data": {...}, "headers": {...}}..]
             func (callable): The user-defined function to execute, this function takes in the following arguments.
                 Args:
                     session (TentacleSession): The Octopus wrapper around the aiohttp.ClientSession.

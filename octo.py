@@ -18,7 +18,8 @@ from octopus_api import OctopusApi
 
 
 # Some sample jobs to make, posting to `python reflect.py`
-#
+# which simply echoes post requests
+
 # requests_list = [{
 #     "url": "http://127.0.0.1:8001",
 #     "params": {"title": f"title number {i}" }} for i in range(10)
@@ -29,23 +30,28 @@ from octopus_api import OctopusApi
 
 
 async def getpage(session, request):
-    async with session.post(url=request["url"], data=request["params"]) as response:
+    async with session.post(url=request["url"], data=json.dumps(request["payload"]), headers=request.get("headers", None)) as response:
         stat = response.status
         bd = await response.text()
-        return {"status": stat, "body": bd}
+        return {"status": stat, "body": bd }
 
 
 def run_requests(args_dict):
     # when calling from R with reticulate or another python programme we might not have all args set
     default_args = get_default_args()
     default_args.update(args_dict)
-    print(default_args)
+    jbs = json.loads(default_args['job_list'])
+    default_args['job_list']= [v for k,v in jbs.items()]
+    print("JOB LIST")
+    print( default_args['job_list'])
+    print("Running requests now")
     return run_requests_(default_args)
 
 
 def run_requests_(args):
-
     # Load job requests
+    # job_list is supplied as a json string
+    # which is a list of dictionaries with url and payload as keys
     if args.get("job_list", None):
         requests_list = args.get("job_list")
     else:
@@ -60,7 +66,6 @@ def run_requests_(args):
         retry_sleep=args["sleep"],
         connections=args["connections"],
     )
-
     # Execute requests and get results
     result = client.execute(requests_list=requests_list, func=getpage)
 
@@ -131,9 +136,9 @@ def main():
     args = parser.parse_args()
 
     # Check if any data is being piped into stdin
-    input_json = sys.stdin.read()
-    if input_json:
-        args.job_list = json.loads(input_json)
+    # input_json = sys.stdin.read()
+    # if input_json:
+    #     args.job_list = json.loads(input_json)
         # todo: could do some input parsing here
 
     # vars(.) converts to a dict for compatibility with the function called by R
