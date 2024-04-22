@@ -33,7 +33,7 @@ async def getpage(session, request):
     async with session.post(url=request["url"], data=json.dumps(request["payload"]), headers=request.get("headers", None)) as response:
         stat = response.status
         bd = await response.text()
-        return {"status": stat, "body": bd }
+        return {'identifier': request["identifier"],  "status": stat, "body": bd }
 
 
 def run_requests(args_dict):
