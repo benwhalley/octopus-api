@@ -61,7 +61,8 @@ def custom_fibo(initial=3):
     )  # start the sequence with the initial value and initial+1
     while True:
         yield a
-        a, b = b, a + b
+        # note we don't rise quite as steeply as regular fibo sequence
+        a, b = b, a + b*.75
 
 
 class OctopusApi:
